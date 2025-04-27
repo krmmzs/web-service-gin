@@ -24,6 +24,7 @@ var albums = []album{
 func main() {
 	router := gin.Default()
 	router.GET("/albums", getAlbums)
+	router.POST("/albums", postAlbums)
 
 	router.Run("localhost:8080")
 }
@@ -31,4 +32,21 @@ func main() {
 // getAlbums responds with the list of all albums as JSON.
 func getAlbums(c *gin.Context) {
 	c.JSON(http.StatusOK, albums)
+}
+
+// postAlbums adds an album from JSON received in the request body.
+func postAlbums(c *gin.Context) {
+	var newAlbum album
+
+	/* // BindXML is a shortcut for c.MustBindWith(obj, binding.BindXML). */
+	/* func (c *Context) BindXML(obj any) error { */
+	/* 	return c.MustBindWith(obj, binding.XML) */
+	/* } */
+
+	if err := c.BindJSON(&newAlbum); err != nil {
+		return
+	}
+
+	albums = append(albums, newAlbum)
+	c.JSON(http.StatusCreated, newAlbum)
 }
